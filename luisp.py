@@ -15,6 +15,20 @@ class Env(dict):
         "Find the innermost Env where var appears."
         return self if var in self else self.outer.find(var)
 
+def add_globals(env):
+    "Add some built-in procedures and variables to the environment."
+    import operator
+    env.update({
+        '+': operator.add,
+        '-': operator.sub,
+        '*': operator.mul,
+        '/': operator.div
+    })
+    env.update({'True': True, 'False': False})
+    return env
+
+global_env = add_globals(Env())
+
 def parse(s):
     "Parse a Luisp expression from a string."
     return read_from(tokenize(s))
