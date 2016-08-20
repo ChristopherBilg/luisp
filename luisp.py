@@ -34,7 +34,9 @@ def add_globals(env):
         '+': operator.add,
         '-': operator.sub,
         '*': operator.mul,
-        '/': operator.div
+        '/': operator.div,
+        '<': operator.lt,
+        '>': operator.gt
     })
     env.update({'True': True, 'False': False})
     return env
@@ -112,12 +114,22 @@ def eval(x, env=global_env):
         val = eval(exp2, env)
         val.insert(0, eval(exp1, env))
         return val
+    elif x[0] == 'define':
+        (_, exp, val) = x
+        env[exp] = eval(val, env)
+        return None
     elif x[0] == 'lambda': # (lambda (x) (+ x  1))
         (_, arguments, exp) = x
         def proc(*args):
             new_env = Env(arguments, args, outer=env)
             return eval(exp, new_env)
         return proc
+    elif x[0] == 'if':
+        (_, cond, if_exp, else_exp) = x
+        if eval(cond, env):
+            return eval(if_exp, env)
+        else:
+            return eval(else_exp, env)
     else:   # (proc exp*)
         exps = [eval(exp, env) for exp in x]
         proc = exps.pop(0)
