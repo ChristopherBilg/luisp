@@ -86,6 +86,17 @@ def eval(x, env=global_env):
         (_, exp1, exp2) = x
         v1, v2 = eval(exp1, env), eval(exp2, env)
         return (not isinstance(v1, list)) and (v1 == v2)
+    elif x[0] == 'car': # (car exp)
+        (_, exp) = x
+        return eval(exp, env)[0]
+    elif x[0] == 'cdr': # (cdr exp)
+        (_, exp) = x
+        return eval(exp, env)[1:]
+    elif x[0] == 'cons': # (cons exp1 exp2)
+        (_, exp1, exp2) = x
+        val = eval(exp2, env)
+        val.insert(0, eval(exp1, env))
+        return val
     else:   # (proc exp*)
         exps = [eval(exp, env) for exp in x]
         proc = exps.pop(0)
