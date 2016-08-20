@@ -4,6 +4,13 @@ import traceback
 Symbol = str
 isa = isinstance
 
+class UndefinedSymbol(Exception):
+    def __init__(self, symbol_name):
+        self.symbol_name = symbol_name
+
+    def __str__(self):
+        return repr(self.symbol_name)
+
 class Env(dict):
     "An environment: a dict of {'var': val} pairs with an outer Env."
 
@@ -13,7 +20,12 @@ class Env(dict):
 
     def find(self, var):
         "Find the innermost Env where var appears."
-        return self if var in self else self.outer.find(var)
+        if var in self:
+            return self
+        elif self.outer:
+            return self.outer.find(var)
+        else:
+            raise KeyError(var)
 
 def add_globals(env):
     "Add some built-in procedures and variables to the environment."
@@ -73,7 +85,10 @@ def to_string(exp):
 def eval(x, env=global_env):
     "Evaluate an expression in an environment"
     if isinstance(x, Symbol):   # variable reference
-        return env.find(x)[x]
+        try:
+            return env.find(x)[x]
+        except KeyError as e:
+            raise UndefinedSymbol(x)
     elif not isinstance(x, list):   # constant literal
         return x
     elif x[0] == 'quote' or x[0] == 'q': # (quote exp), or (q exp)
