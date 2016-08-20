@@ -2,6 +2,7 @@ import sys
 import traceback
 
 Symbol = str
+isa = isinstance
 
 def parse(s):
     "Parse a Luisp expression from a string."
@@ -37,13 +38,20 @@ def atom(token):
         except ValueError:
             return Symbol(token)
 
+def to_string(exp):
+    "Convert a Python object back into a Lisp-readable string."
+    if not isa(exp, list):
+        return str(exp)
+    else:
+        return "(" + " ".join(map(to_string, exp)) + ")"
+
 def repl(prompt='<luisp> '):
     "A prompt-read-eval-print loop."
     while True:
         try:
             val = parse(raw_input(prompt))
             if val is not None:
-                print val
+                print to_string(val)
         except KeyboardInterrupt:
             print "\nExiting luisp\n"
             sys.exit();
