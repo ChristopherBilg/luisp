@@ -115,9 +115,7 @@ def eval(x, env=global_env):
     elif x[0] == 'lambda': # (lambda (x) (+ x  1))
         (_, arguments, exp) = x
         def proc(*args):
-            new_env = Env(outer=env)
-            for i in range(len(args)):
-                new_env[arguments[i]] = args[i]
+            new_env = Env(arguments, args, outer=env)
             return eval(exp, new_env)
         return proc
     else:   # (proc exp*)
