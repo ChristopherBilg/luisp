@@ -70,11 +70,32 @@ def to_string(exp):
     else:
         return "(" + " ".join(map(to_string, exp)) + ")"
 
+def eval(x, env=global_env):
+    "Evaluate an expression in an environment"
+    if isinstance(x, Symbol):   # variable reference
+        return env.find(x)[x]
+    elif not isinstance(x, list):   # constant literal
+        return x
+    elif x[0] == 'quote' or x[0] == 'q': # (quote exp), or (q exp)
+        (_, exp) = x
+        return exp
+    elif x[0] == 'atom?': # (atom? exp)
+        (_, exp) = x
+        return not isinstance(eval(exp, env), list)
+    elif x[0] == 'eq?': # (eq? exp1 exp2)
+        (_, exp1, exp2) = x
+        v1, v2 = eval(exp1, env), eval(exp2, env)
+        return (not isinstance(v1, list)) and (v1 == v2)
+    else:   # (proc exp*)
+        exps = [eval(exp, env) for exp in x]
+        proc = exps.pop(0)
+        return proc(*exps)
+
 def repl(prompt='<luisp> '):
     "A prompt-read-eval-print loop."
     while True:
         try:
-            val = parse(raw_input(prompt))
+            val = eval(parse(raw_input(prompt)))
             if val is not None:
                 print to_string(val)
         except KeyboardInterrupt:
