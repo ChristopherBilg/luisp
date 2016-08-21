@@ -154,4 +154,19 @@ def handle_error():
     print "Oops! Well, at least there's a Python stack trace:\n"
     traceback.print_exc()
 
-repl()
+def load(filename):
+    print "Loading and executing %s" % filename
+    f = open(filename, "r")
+    program = f.readlines()
+    f.close()
+    for line in program:
+        val = eval(parse(line))
+        if val is not None:
+            print val
+
+# For CLI
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        load(sys.argv[1])
+    else:
+        repl()
