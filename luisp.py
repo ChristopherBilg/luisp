@@ -145,6 +145,8 @@ def repl(prompt='<luisp> '):
         except KeyboardInterrupt:
             print "\nExiting luisp\n"
             sys.exit();
+        except UndefinedSymbol as e:
+            print "Undefined symbol: %s" % e
         except:
             handle_error()
 
