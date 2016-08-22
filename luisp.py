@@ -29,6 +29,7 @@ class Env(dict):
 
 def add_globals(env):
     "Add some built-in procedures and variables to the environment."
+    import math
     import operator
     env.update({
         '+': lambda *args: reduce(operator.add, args),
@@ -36,7 +37,8 @@ def add_globals(env):
         '*': operator.mul,
         '/': operator.div,
         '<': operator.lt,
-        '>': operator.gt
+        '>': operator.gt,
+        'sqrt': math.sqrt
     })
     env.update({'True': True, 'False': False})
     return env
