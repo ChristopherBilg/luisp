@@ -33,7 +33,7 @@ def add_globals(env):
     import operator
     env.update({
         '+': lambda *args: reduce(operator.add, args),
-        '-': operator.sub,
+        '-': lambda *args: operator.sub(0, *args) if len(args) == 1 else operator.sub(*args),
         '*': operator.mul,
         '/': operator.div,
         '<': operator.lt,
