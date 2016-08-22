@@ -159,10 +159,17 @@ def load(filename):
     f = open(filename, "r")
     program = f.readlines()
     f.close()
+    line_number = 0
     for line in program:
-        val = eval(parse(line))
-        if val is not None:
-            print val
+        line_number += 1
+        if not line or line == '\n':
+            continue
+        try:
+            val = eval(parse(line))
+            if val is not None:
+                print to_string(val)
+        except Exception as e:
+            print "Error %s on line %d" % (e, line_number)
 
 # For CLI
 if __name__ == "__main__":
