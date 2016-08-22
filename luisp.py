@@ -31,7 +31,7 @@ def add_globals(env):
     "Add some built-in procedures and variables to the environment."
     import operator
     env.update({
-        '+': operator.add,
+        '+': lambda *args: reduce(operator.add, args),
         '-': operator.sub,
         '*': operator.mul,
         '/': operator.div,
