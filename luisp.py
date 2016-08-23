@@ -132,6 +132,12 @@ def eval(x, env=global_env):
             return eval(if_exp, env)
         else:
             return eval(else_exp, env)
+    elif x[0] == 'cond':
+        x.pop(0)
+        for exp in x:
+            cond, cond_exp = exp
+            if eval(cond, env):
+                return eval(cond_exp, env)
     else:   # (proc exp*)
         exps = [eval(exp, env) for exp in x]
         proc = exps.pop(0)
