@@ -1,8 +1,10 @@
 import sys
 import traceback
 
-Symbol = str
 isa = isinstance
+
+class Symbol(str):
+    pass
 
 class UndefinedSymbol(Exception):
     def __init__(self, symbol_name):
@@ -70,9 +72,16 @@ def read_from(tokens):
         return atom(token)
 
 def atom(token):
+    import re
     "Numbers become numbers; every other token is a symbol."
     try:
-        return int(token)
+        # check for quoted string regex
+        match = re.compile("\"(.*)\"").match(token)
+        if match:
+            string_group, = match.groups()
+            return str(string_group)
+        else:
+            return int(token)
     except ValueError:
         try:
             return float(token)
@@ -81,10 +90,12 @@ def atom(token):
 
 def to_string(exp):
     "Convert a Python object back into a Lisp-readable string."
-    if not isa(exp, list):
-        return str(exp)
-    else:
+    if type(exp) == str:
+        return '"%s"' % exp
+    elif isa(exp, list):
         return "(" + " ".join(map(to_string, exp)) + ")"
+    else:
+        return str(exp)
 
 def eval(x, env=global_env):
     "Evaluate an expression in an environment"
@@ -138,6 +149,15 @@ def eval(x, env=global_env):
             cond, cond_exp = exp
             if eval(cond, env):
                 return eval(cond_exp, env)
+    elif x[0] == 'conc':
+        x.pop(0)
+        val = None
+        for exp in x:
+            if not val:
+                val = eval(exp, env)
+            else:
+                val = val + eval(exp, env)
+        return val
     else:   # (proc exp*)
         exps = [eval(exp, env) for exp in x]
         proc = exps.pop(0)
