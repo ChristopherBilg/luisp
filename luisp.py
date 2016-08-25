@@ -158,6 +158,9 @@ def eval(x, env=global_env):
             else:
                 val = val + eval(exp, env)
         return val
+    elif x[0] == 'null?':
+        (_, exp) = x
+        return eval(exp, env) == []
     else:   # (proc exp*)
         exps = [eval(exp, env) for exp in x]
         proc = exps.pop(0)
