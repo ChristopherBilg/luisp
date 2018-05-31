@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+import readline
 import sys
 import traceback
 
