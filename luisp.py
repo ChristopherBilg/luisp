@@ -124,19 +124,16 @@ def eval(x, env=global_env):
         return eval(exp, env)[1:]
     elif x[0] == 'cons': # (cons exp1 exp2)
         (_, exp1, exp2) = x
-        val = eval(exp2, env)
-        val.insert(0, eval(exp1, env))
-        return val
+        lis = eval(exp2, env)
+        lis.insert(0, eval(exp1, env))
+        return lis
     elif x[0] == 'define':
         (_, exp, val) = x
         env[exp] = eval(val, env)
         return None
     elif x[0] == 'lambda': # (lambda (x) (+ x  1))
         (_, arguments, exp) = x
-        def proc(*args):
-            new_env = Env(arguments, args, outer=env)
-            return eval(exp, new_env)
-        return proc
+        return lambda *args: eval(exp, Env(arguments, args, outer=env))
     elif x[0] == 'if':
         (_, cond, if_exp, else_exp) = x
         if eval(cond, env):
@@ -201,6 +198,7 @@ def load(filename):
                 print to_string(val)
         except Exception as e:
             print "Error %s on line %d" % (e, line_number)
+            handle_error()
 
 # For CLI
 if __name__ == "__main__":
