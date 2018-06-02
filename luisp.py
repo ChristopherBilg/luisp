@@ -120,7 +120,7 @@ def eval(x, env=global_env):
         return (not isinstance(v1, list)) and (v1 == v2)
     elif x[0] == 'car': # (car exp)
         (_, exp) = x
-        return eval(exp, env)[0]
+        return eval(eval(exp, env)[0], env)
     elif x[0] == 'cdr': # (cdr exp)
         (_, exp) = x
         return eval(exp, env)[1:]
