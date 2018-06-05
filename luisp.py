@@ -126,7 +126,8 @@ def eval(x, env=global_env):
         return eval(exp, env)[1:]
     elif x[0] == 'cons': # (cons exp1 exp2)
         (_, exp1, exp2) = x
-        lis = eval(exp2, env)
+        # Copy the list
+        lis = eval(exp2, env)[:]
         lis.insert(0, eval(exp1, env))
         return lis
     elif x[0] == 'define':
