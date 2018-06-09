@@ -37,3 +37,6 @@
 (constest 1 2)
 (constest 1 2)
 (constest 1 2)
+
+(define a (pairlis (quote (1 2 3)) (quote (4 5 6))))
+(assoc 2 a)

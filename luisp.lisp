@@ -9,6 +9,4 @@
 (define caddr (lambda (x) (cadr (cdr x))))
 (define caddar (lambda (x) (caddr (car x))))
 (define pairlis (lambda (x y) (if (null? x) (q ()) (cons (pair (car x) (car y)) (pairlis (cdr x) (cdr y))))))
-
-(pairlis (q (1 2 3)) (q (4 5 6)))
-
+(define assoc (lambda (k1 l1) (if (eq? (caar l1) k1) (cadar l1) (assoc k1 (cdr l1)))))
