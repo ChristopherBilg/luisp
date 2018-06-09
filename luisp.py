@@ -197,18 +197,44 @@ def load(filename):
     f = open(filename, "r")
     program = f.readlines()
     f.close()
+
+    upc = get_unclosed_parentheses_counts(program)
+
     line_number = 0
-    for line in program:
+    statement = ""
+    for (unclosed_parentheses, line) in zip(upc, program):
         line_number += 1
-        if not line or line == '\n':
+        statement += line
+
+        # Still unclosed, keeping going
+        if unclosed_parentheses > 0:
+            continue
+
+        # Skip whitespace
+        if not statement or statement == '\n':
+            statement = ""
             continue
         try:
-            val = eval(parse(line))
+            val = eval(parse(statement))
             if val is not None:
                 print to_string(val)
         except Exception as e:
             print "Error %s on line %d" % (e, line_number)
             handle_error()
+
+        # Reset statement
+        statement = ""
+
+def get_unclosed_parentheses_counts(program):
+    """
+    Determines the number of unclosed parentheses at each line in the program.
+    """
+    upc = []
+    current_count = 0
+    for line in program:
+        current_count += line.count("(") - line.count(")")
+        upc.append(current_count)
+    return upc
 
 # For CLI
 if __name__ == "__main__":
