@@ -15,6 +15,9 @@ class UndefinedSymbol(Exception):
     def __str__(self):
         return repr(self.symbol_name)
 
+class EvalError(Exception):
+    pass
+
 class Env(dict):
     "An environment: a dict of {'var': val} pairs with an outer Env."
 
@@ -164,6 +167,8 @@ def eval(x, env=global_env):
     else:   # (proc exp*)
         exps = [eval(exp, env) for exp in x]
         proc = exps.pop(0)
+        if not callable(proc):
+            raise EvalError("%s is not a function" % proc)
         return proc(*exps)
 
 def repl(prompt='<luisp> '):
@@ -178,6 +183,8 @@ def repl(prompt='<luisp> '):
             sys.exit();
         except UndefinedSymbol as e:
             print "Undefined symbol: %s" % e
+        except EvalError as e:
+            print "Eval: %s" % e
         except:
             handle_error()
 
